@@ -20,25 +20,28 @@ I wanted a pipeline where **every requirement traces back to something the clien
 
 In my pipeline, one order moves through a fixed sequence of stages. Each stage is a separate model call with its own structured output, validated on the server.
 
-| Stage | What happens |
-|---|---|
-| **Intake** | The client's answers to an 11-question form, stored verbatim. Every answer is cited downstream as `intake.F01` to `intake.F11`. |
-| **Intake audit** | Reads the answers and produces numbered **decisions**, assumptions, resolutions and open questions. It rechecks earlier resolutions for mutual consistency and catches client-stated facts that were missed. |
-| **Brief certification** | An optimized validation pass. It passes only with **zero unanswered questions**. |
-| **Approval (human)** | The one act that **freezes scope**. The automated pilot can pause for approval, but it never approves for you. |
-| **Master PRD** | One product spec. Every requirement (`REQ-001`...) lists its **approved sources** (`DEC-001, ASM-004`), acceptance criteria and milestone. It specifies the product, not the build. |
-| **Master QC** | An independent reviewer in a fresh context. It emits typed findings, the system repairs them surgically, and it rechecks. Acceptance needs two clean survey samples in each of two rounds, with every finding fixed, retired, or explicitly rejected by the operator. |
-| **Companion files** | One handoff file per target tool, derived from the accepted Master: `AGENTS.md` (Codex, Cursor and compatible agents), `CLAUDE.md` (Claude Code, importing AGENTS.md), `replit.md`, and Lovable Project Knowledge. |
-| **Package QC** | A second certification over the whole package. |
-| **Final ZIP export** | Master PRD, product spec, companion files, developer handoff, acceptance checklist, decision ledger, the diagram pack (scope map, role matrix, traceability diagram, an interactive traceability map, and one flowchart per core workflow, in SVG and PNG), changelog, delivery message and a manifest. A draft export is stamped so it can't be mistaken for final. |
+| Stage | Screen | What happens |
+|---|---|---|
+| **Intake** | <a href="screenshots/intake.png"><img src="screenshots/thumbs/intake.png" width="240" alt="Intake screen (click for full size)"></a> | The client's answers to an 11-question form, stored verbatim. Every answer is cited downstream as `intake.F01` to `intake.F11`. |
+| **Intake audit** | <a href="screenshots/intake_audit.png"><img src="screenshots/thumbs/intake_audit.png" width="240" alt="Intake audit screen (click for full size)"></a> | Reads the answers and produces numbered **decisions**, assumptions, resolutions and open questions. It rechecks earlier resolutions for mutual consistency and catches client-stated facts that were missed. |
+| **Brief certification** | <a href="screenshots/brief_certification.png"><img src="screenshots/thumbs/brief_certification.png" width="240" alt="Brief certification screen (click for full size)"></a> | An optimized validation pass. It passes only with **zero unanswered questions**. |
+| **Approval (human)** | *see Brief certification* | The one act that **freezes scope**. The automated pilot can pause for approval, but it never approves for you. *(The Approval panel is on the Brief certification screen, right side.)* |
+| **Brief rebaseline (only when needed)** | <a href="screenshots/brief_rebaseline.png"><img src="screenshots/thumbs/brief_rebaseline.png" width="240" alt="Brief rebaseline screen (click for full size)"></a> | Re-bases the approved brief on a complete client QC reply. It is added to the plan mid-run, and the approved baseline is kept until the rebaseline passes. Not needed for this order. |
+| **Master PRD** | <a href="screenshots/master_prd.png"><img src="screenshots/thumbs/master_prd.png" width="240" alt="Master PRD screen (click for full size)"></a> | One product spec. Every requirement (`REQ-001`...) lists its **approved sources** (`DEC-001, ASM-004`), acceptance criteria and milestone. It specifies the product, not the build. |
+| **Master QC** | <a href="screenshots/master_qc.png"><img src="screenshots/thumbs/master_qc.png" width="240" alt="Master QC screen (click for full size)"></a> | An independent reviewer in a fresh context. It emits typed findings, the system repairs them surgically, and it rechecks. Acceptance needs two clean survey samples in each of two rounds, with every finding fixed, retired, or explicitly rejected by the operator. |
+| **Companion files** | <a href="screenshots/companion_files.png"><img src="screenshots/thumbs/companion_files.png" width="240" alt="Companion files screen (click for full size)"></a> | One handoff file per target tool, derived from the accepted Master: `AGENTS.md` (Codex, Cursor and compatible agents), `CLAUDE.md` (Claude Code, importing AGENTS.md), `replit.md`, and Lovable Project Knowledge. |
+| **Package QC** | <a href="screenshots/package_qc.png"><img src="screenshots/thumbs/package_qc.png" width="240" alt="Package QC screen (click for full size)"></a> | A second certification over the whole package. |
+| **Final ZIP export** | <a href="screenshots/final_zip_export.png"><img src="screenshots/thumbs/final_zip_export.png" width="240" alt="Final ZIP export screen (click for full size)"></a> | Master PRD, product spec, companion files, developer handoff, acceptance checklist, decision ledger, the diagram pack (scope map, role matrix, traceability diagram, an interactive traceability map, and one flowchart per core workflow, in SVG and PNG), changelog, delivery message and a manifest. A draft export is stamped so it can't be mistaken for final. |
 
-| | |
-|---|---|
-| ![Intake](screenshots/intake.png) | ![Intake audit](screenshots/intake_audit.png) |
-| ![Master PRD](screenshots/master_prd.png) | ![Master QC](screenshots/master_qc.png) |
-| ![Companion files](screenshots/companion_files.png) | ![Final ZIP export](screenshots/final_zip_export.png) |
+**Supporting screens**
 
-More screens (brief certification, rebaseline, package QC, client request and reply inbox) are in [`screenshots/`](screenshots/).
+| Screen | What it shows |
+|---|---|
+| <a href="screenshots/overview.png"><img src="screenshots/thumbs/overview.png" width="240" alt="Overview screen (click for full size)"></a><br>**Overview** | The stage board with the planned model calls, pilot status and the generation allowance. |
+| <a href="screenshots/client_request.png"><img src="screenshots/thumbs/client_request.png" width="240" alt="Client request screen (click for full size)"></a><br>**Client request** | Builds the packet that goes to the client when an answer or QC decision needs them, records what comes back, and closes it. |
+| <a href="screenshots/inbox.png"><img src="screenshots/thumbs/inbox.png" width="240" alt="Reply inbox screen (click for full size)"></a><br>**Reply inbox** | Client replies arrive as files and are matched to exactly one order, then applied, flagged for review, or rejected. |
+
+*Click any thumbnail for the full-size screenshot.*
 
 ## Design choices worth talking about
 
