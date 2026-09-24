@@ -92,7 +92,7 @@ I wrote this demonstration order myself; it is not client work.
 
 ## Tools used to build it
 
-I built it with Claude Code, Codex, Cursor and other agentic coding tools, using a spec, then plan, then implementation workflow. The same agents are the audience for the package it produces, so I built and tested it against how they actually read `AGENTS.md` and `CLAUDE.md`.
+I built it with Claude Code, Codex and other agentic coding tools, using a spec, then plan, then implementation workflow. The same agents are the audience for the package it produces, so I built and tested it against how they actually read `AGENTS.md` and `CLAUDE.md`.
 
 ## Contact
 
