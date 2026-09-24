@@ -91,4 +91,4 @@ I built it with Claude Code, Codex, Cursor and other agentic coding tools, using
 
 ## Contact
 
-[github.com/jerry-builds](https://github.com/jerry-builds)
+[LinkedIn](https://www.linkedin.com/in/jerry-rivas) · [GitHub](https://github.com/jerry-builds)
