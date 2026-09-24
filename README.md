@@ -4,6 +4,8 @@
 
 I built this solo with AI coding agents, August to September 2026, in Next.js / TypeScript. The source is private; this repo is a case study with screenshots and a complete sample output. I'm happy to walk through the code live.
 
+**Live showcase:** https://jerry-builds.github.io/project-workbench-case-study/
+
 ![Overview](screenshots/overview.png)
 
 ---
