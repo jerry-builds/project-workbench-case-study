@@ -1,0 +1,1 @@
+Your final PRD package for Elm Street Clinic Front Desk is attached. It includes the revision 2 PRD, the handoff guides for your selected tools, assumptions, and revision notes. The diagrams/ folder holds the Visual Pack, drawn from this revision's specification.

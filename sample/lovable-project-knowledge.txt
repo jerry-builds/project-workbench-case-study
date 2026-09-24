@@ -1,0 +1,53 @@
+The certified Master specification is the authoritative product source: elm-street-clinic-front-desk-r2-PRD.md
+This file explains how to use the specification with this tool. It is a specification handoff, not an implementation plan.
+If this file conflicts with the certified Master, the Master controls.
+
+## Purpose
+
+This product replaces a six-role clinic's phone booking, paper intake, handwritten reminders, and notebook no-show log with one system: patient self-service, front-desk operations, clinical hand-off, billing hand-off, and practice-manager configuration and reporting.
+
+## Reading Order
+
+1. elm-street-clinic-front-desk-r2-PRD.md — the Master. This is the authoritative source for every requirement, acceptance criterion, role, and flow.
+2. This file — persistent project knowledge and terminology for working the Master inside this tool. It states no requirement the Master does not already state.
+
+## Product Terminology
+
+- **Appointment Type** — a practice-manager-defined category with a default duration (REQ-017).
+- **No-show flag** — automatic status set after a patient's third no-show inside a rolling six-month window, and lifted automatically once fewer than three remain in that window; while set, only a receptionist can book that patient, not the patient themselves (REQ-016).
+- **Ready status** — a nurse-set flag on a checked-in patient after reading their intake form; visible on the assigned clinician's own schedule (REQ-010, REQ-011).
+- **Late flag** — set when a patient checks in after the no-show grace period has elapsed but before a receptionist marks them a no-show (REQ-026).
+- **Visit summary code** — one entry selected from the practice-manager-maintained fixed list at visit completion; never a free-text field (REQ-012, per Q-02).
+- **Sent to billing** — a manual status the billing clerk sets on a completed visit, kept separate from and not altering the automatic billing transmission that fires on visit completion (REQ-013, REQ-014).
+- **Shared calendar feed** — the clinic's pre-existing shared calendar, kept in place per Q-01; this product writes scheduling data to it one-way only and never reads bookings back from it (REQ-033).
+- **Cutoff** — the practice-manager-configured time before which a patient can reschedule or cancel their own appointment; receptionists are not bound by it (REQ-002, REQ-003).
+- **Grace period** — the practice-manager-configured span after an appointment's start time that must elapse, with no check-in, before a receptionist can mark it a no-show (REQ-015).
+
+## Environment Inspection
+
+The Master's `stack` field is empty on purpose. Before building anything, look at what already exists in this Lovable project — any scaffolded screens for the six roles (Patient, Receptionist, Nurse, Clinician, Billing Clerk, Practice Manager), any existing tables, any existing connection to the patient records system, messaging service, billing system, or shared calendar. Build on what is there rather than assuming a blank project.
+
+## Open Questions vs. Open Choices
+
+Q-01 and Q-02 are already answered in the Master (calendar stays as a one-way feed target; summary codes come from a fixed list). Do not reopen either.
+
+- If an unresolved point would change behavior, access, scope, or an acceptance criterion, pause only the affected piece of work, ask for clarification citing the REQ-ID, and keep working on unrelated parts.
+- If the Master simply leaves a choice open (a layout detail, a naming convention, which table holds which field), inspect the project and choose, as long as the requirements the choice touches still pass.
+
+## Evidence Per Acceptance Criterion
+
+Every REQ-001 through REQ-034 in the Master states acceptance criteria as pass/fail pairs. For each one built, confirm the pass path works and confirm the paired fail path is actually blocked — for example, REQ-001 requires showing both that a booked slot disappears for other patients and that a booking without a matching slot cannot be submitted.
+
+## Constraints to Preserve
+
+- Shared calendar: one-way write only, never read back, payload limited to patient name, time, duration, room, clinician, appointment type (REQ-033).
+- Billing: only summary code and visit date go out automatically on visit completion; only a receipt confirmation comes back; the billing clerk's "sent" status is separate (REQ-013, REQ-014).
+- Intake form content never appears in a message or a billing transmission, and a submitted intake form or completed visit can never be deleted by any role (REQ-031, REQ-032).
+- Patient records system is read-only from this product (REQ-028).
+- Staff accounts are created only by the practice manager; patient accounts are created only by receptionist lookup against the records system (REQ-027, REQ-029).
+- Every staff action on an appointment or intake form is logged with actor identity and timestamp, and log entries are never editable or deletable (REQ-021).
+- Reminder confirm/cancel links use a unique token per message; the client left the token mechanism itself as an implementation choice, ruling out free-text reply parsing as the sole path (REQ-005).
+
+## What This File Does Not Do
+
+It does not prescribe a database schema, a component structure, a build command, or a specific Lovable configuration. Those are choices to make after inspecting the project, not specification content.

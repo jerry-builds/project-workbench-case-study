@@ -1,0 +1,735 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Clinic Front-Desk Operations Platform — Master PRD — traceability map</title><style>:root { --paper: #f5f5f5; --white: #ffffff; --ink: #2d3142; --muted: #4f5d75; --soft: #7a8399; --accent: #eb6c36; --accentTint: rgba(235,108,54,0.10); --rule: rgba(45,49,66,0.15); --inputFill: rgba(79,93,117,0.10); --storeFill: rgba(45,49,66,0.05); --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family:var(--sans); font-size: 12px; line-height: 1.45; }
+header { padding: 24px 32px 16px; border-bottom: 1px solid var(--rule); }
+h1 { margin: 0 0 12px; font-size: 16px; font-weight: 600; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button, input { font-family:var(--sans); font-size: 12px; color: var(--ink); }
+.controls button { padding: 6px 12px; border: 1px solid var(--ink); border-radius: 6px; background: var(--white); cursor: pointer; }
+.controls button:hover { background: var(--inputFill); }
+.controls input { padding: 6px 10px; border: 1px solid var(--ink); border-radius: 6px; background: var(--white); min-width: 220px; }
+#orphan-count { border-color: var(--accent); color: var(--accent); background: var(--accentTint); }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 14px; font-family:var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+.legend span.item { display: inline-flex; align-items: center; gap: 6px; }
+.swatch { display: inline-block; width: 14px; height: 10px; border: 1px solid var(--ink); border-radius: 2px; }
+.swatch-requirement { background: var(--white); }
+.swatch-source { background: var(--storeFill); }
+.swatch-milestone { background: var(--inputFill); }
+.swatch-orphan { background: var(--accentTint); border-color: var(--accent); }
+#key { margin: 16px 0 2px; max-width: 72ch; color: var(--muted); font-size: 11px; line-height: 1.6; }
+#draft-banner { margin: 0; padding: 10px 32px; background: var(--accentTint); border-bottom: 1px solid var(--accent); color: var(--accent); font-family:var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; }
+#draft-banner[hidden] { display: none; }
+#stage { position: relative; padding: 28px 32px 8px; overflow: auto; }
+#wires { position: absolute; top: 28px; left: 32px; pointer-events: none; }
+#tree { position: relative; }
+.wire { fill: none; stroke: var(--muted); stroke-width: 1; }
+.node { position: absolute; top: 0; left: 0; border: 1px solid var(--ink); border-radius: 6px; background: var(--white); color: var(--ink); font-family:var(--sans); font-size: 12px; line-height: 1.45; }
+.node-main { display: block; width: 100%; text-align: left; padding: 12px 26px 12px 12px; margin: 0; border: 0; border-radius: 6px; background: transparent; color: inherit; font-family:var(--sans); font-size: 12px; line-height: 1.45; cursor: pointer; }
+.node[hidden] { display: none; }
+.node.snap { transition: none; }
+.node[data-node="root"] { background: var(--white); }
+.node[data-node="milestone"] { background: var(--inputFill); }
+.node[data-node="requirement"] { background: var(--white); }
+.node[data-node="source"] { background: var(--storeFill); }
+.node[data-orphan="true"] { background: var(--accentTint); border-color: var(--accent); border-width: 1.2px; }
+.node-main:focus-visible, .disclosure:focus-visible, .also-under a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.node .label { display: block; font-family:var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+.node .name { display: block; margin-top: 6px; font-size: 12px; font-weight: 600; }
+.node .statement { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; margin-top: 6px; color: var(--ink); }
+.node .meta + .meta { margin-top: 2px; }
+.node .meta { display: block; margin-top: 8px; font-family:var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--soft); }
+.node .badge { display: inline-block; margin-top: 8px; padding: 2px 6px; border: 1px solid var(--rule); border-radius: 2px; font-family:var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+.node .also-under { display: block; padding: 0 26px 12px 12px; margin-top: -2px; font-family:var(--mono); font-size: 8px; letter-spacing: 0.06em; color: var(--muted); }
+.node .also-under a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.disclosure { position: absolute; top: 8px; right: 2px; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 4px; background: transparent; cursor: pointer; }
+.disclosure::before { content: ""; position: absolute; top: 6px; left: 7px; width: 0; height: 0; border-left: 5px solid var(--muted); border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
+.disclosure[aria-expanded="true"]::before { transform: rotate(90deg); }
+.node.is-selected { background: var(--accentTint); border-color: var(--accent); border-width: 1.2px; }
+.node.is-related { border-color: var(--accent); border-width: 1.2px; }
+.node.is-dimmed { opacity: .35; }
+.node.is-dimmed[data-orphan="true"] { opacity: 1; }
+.node.is-dimmed[data-orphan="true"] .node-main, .node.is-dimmed[data-orphan="true"] .also-under, .node.is-dimmed[data-orphan="true"] .disclosure { opacity: .35; }
+.node.is-preview { outline: 2px dashed var(--accent); outline-offset: 2px; }
+.node.has-hit::after { content: ""; position: absolute; top: 50%; right: -14px; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: var(--accent); }
+.wire.is-lit { stroke: var(--accent); }
+body.panel-open { padding-right: 360px; }
+#panel { position: fixed; top: 0; right: 0; width: 360px; height: 100%; padding: 24px; overflow: auto; background: var(--white); border-left: 1px solid var(--ink); }
+#panel[hidden] { display: none; }
+#panel h2 { margin: 0 0 4px; word-break: break-word; font-size: 13px; font-weight: 600; color: var(--ink); }
+#panel .panel-label { display: block; margin-top: 16px; font-family:var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+#panel .panel-text { margin-top: 6px; }
+#panel ul { margin: 6px 0 0; padding-left: 16px; }
+#panel li { margin-top: 4px; }
+#panel a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+#panel-close { margin-top: 20px; padding: 6px 12px; border: 1px solid var(--ink); border-radius: 6px; background: var(--white); cursor: pointer; }
+@media (max-width: 899px) {
+  body.panel-open { padding-right: 0; padding-bottom: 45vh; }
+  #panel { top: auto; bottom: 0; left: 0; width: 100%; height: auto; max-height: 45vh; border-left: 0; border-top: 1px solid var(--ink); }
+}
+footer { padding: 16px 32px 28px; font-family:var(--mono); font-size: 8px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) {
+  .node { transition: opacity 160ms ease, top 160ms ease, left 160ms ease; }
+  .disclosure::before { transition: transform 160ms ease; }
+}</style></head><body><div id="draft-banner" hidden>WORKING DRAFT — QC approval pending. Do not treat this as a final baseline.</div><header><h1 id="map-title">Clinic Front-Desk Operations Platform — Master PRD — traceability map</h1><div class="controls"><button id="expand-all" type="button">Expand all</button><button id="collapse-all" type="button">Collapse all</button><input id="find" type="search" aria-label="Find by id or words" placeholder="Find by id or words"><button id="orphan-count" type="button" hidden></button></div><div class="legend"><span class="item"><span class="swatch swatch-milestone"></span>Milestone</span><span class="item"><span class="swatch swatch-requirement"></span>Requirement</span><span class="item"><span class="swatch swatch-source"></span>Approved source</span><span class="item"><span class="swatch swatch-orphan"></span>Without an approved source</span></div><p id="key">A decision used by several requirements appears under each of them. The badge shows how many; select one to see them all.</p></header><main id="stage"><svg id="wires" aria-hidden="true"></svg><div id="tree"></div></main><aside id="panel" aria-live="polite" hidden><h2 id="panel-title"></h2><div id="panel-body"></div><button id="panel-close" type="button">Close</button></aside><footer>Derived from the Master PRD (revision 2) · the Master controls in any conflict · request a revision rather than editing this file</footer><script type="application/json" id="map-data">{"title":"Clinic Front-Desk Operations Platform — Master PRD","revision":2,"milestones":[{"name":"M2: Core Scheduling \u0026 Configuration","label":"M2: Core Scheduling \u0026 Configuration","token":"M2","requirementIds":["REQ-001","REQ-002","REQ-003","REQ-017","REQ-018","REQ-019","REQ-023"]},{"name":"M3: Reminders \u0026 Confirmations","label":"M3: Reminders \u0026 Confirmations","token":"M3","requirementIds":["REQ-004","REQ-005","REQ-006"]},{"name":"M4: Intake \u0026 Check-In","label":"M4: Intake \u0026 Check-In","token":"M4","requirementIds":["REQ-007","REQ-008","REQ-009","REQ-010","REQ-011"]},{"name":"M5: Visit Completion \u0026 Billing","label":"M5: Visit Completion \u0026 Billing","token":"M5","requirementIds":["REQ-012","REQ-013","REQ-014","REQ-032"]},{"name":"M6: No-Show \u0026 Absence Handling","label":"M6: No-Show \u0026 Absence Handling","token":"M6","requirementIds":["REQ-015","REQ-016","REQ-024","REQ-025","REQ-026"]},{"name":"M7: Reporting \u0026 Audit","label":"M7: Reporting \u0026 Audit","token":"M7","requirementIds":["REQ-020","REQ-021","REQ-022","REQ-031"]},{"name":"M1: Accounts \u0026 Access","label":"M1: Accounts \u0026 Access","token":"M1","requirementIds":["REQ-027","REQ-028","REQ-029","REQ-030"]},{"name":"M8: Calendar Integration \u0026 Tablet Optimization","label":"M8: Calendar Integration \u0026 Tablet Optimization","token":"M8","requirementIds":["REQ-033","REQ-034"]}],"requirements":[{"id":"REQ-001","statement":"Patients can book an appointment by selecting an appointment type; the system assigns an available clinician and room, and the slot becomes unavailable to other patients immediately on booking.","acceptanceCriteria":["Given an appointment type with an available clinician+room+time combination, when a patient submits a booking, the system creates the appointment and that slot is no longer offered to other patients (pass) / the slot remains bookable by another patient (fail).","Given no slot matches the requested type, the patient cannot submit a booking for it (pass) / a conflicting booking is created (fail)."],"milestone":"M2: Core Scheduling \u0026 Configuration","sourceIds":["DEC-001"],"orphan":false},{"id":"REQ-002","statement":"Patients can reschedule or cancel only their own appointment, and only before a practice-manager-configured cutoff time.","acceptanceCriteria":["Given the current time is before the cutoff, a patient can reschedule or cancel their own appointment (pass) / the action is blocked (fail).","Given the current time is at or after the cutoff, reschedule/cancel controls are unavailable to the patient (pass) / the change still succeeds (fail).","A patient cannot reschedule or cancel another patient's appointment (pass) / another patient's appointment is editable (fail).","Given the practice manager edits the cutoff time, the new value applies to future reschedule/cancel eligibility checks (pass) / the previous cutoff value continues to apply (fail)."],"milestone":"M2: Core Scheduling \u0026 Configuration","sourceIds":["DEC-002","DEC-036"],"orphan":false},{"id":"REQ-003","statement":"Receptionists can book, reschedule, and cancel an appointment on behalf of any patient, at any time, with no cutoff restriction.","acceptanceCriteria":["Given any time relative to an appointment, a receptionist can reschedule or cancel it (pass) / the cutoff blocks the receptionist (fail).","A receptionist can create a new booking for any looked-up patient (pass) / booking on behalf of a patient is unavailable (fail)."],"milestone":"M2: Core Scheduling \u0026 Configuration","sourceIds":["DEC-003"],"orphan":false},{"id":"REQ-017","statement":"The practice manager configures clinic hours, rooms, appointment types, appointment durations, and the fixed list of visit summary codes; only the practice manager role can edit these.","acceptanceCriteria":["Given a practice manager adds, edits, or removes a room, type, duration, or summary code, the change is reflected immediately in booking and completion screens (pass) / stale values persist (fail).","No other role has access to these configuration controls (pass) / another role can edit them (fail).","Given a practice manager edits clinic hours, the new hours apply to future booking availability (pass) / the previous hours still apply (fail)."],"milestone":"M2: Core Scheduling \u0026 Configuration","sourceIds":["DEC-015","DEC-047"],"orphan":false},{"id":"REQ-018","statement":"The system never permits two appointments to hold the same room at overlapping times, and every schedule view shows each appointment's assigned room.","acceptanceCriteria":["Given a room is booked for a time range, a second booking for that room in an overlapping range is rejected (pass) / it succeeds (fail).","Every appointment entry in schedule views shows its assigned room (pass) / the room is missing (fail)."],"milestone":"M2: Core Scheduling \u0026 Configuration","sourceIds":["DEC-016","DEC-035"],"orphan":false},{"id":"REQ-019","statement":"The system never permits a clinician to hold two appointments with overlapping times.","acceptanceCriteria":["Given a clinician is booked for a time range, a second booking for that clinician in an overlapping range is rejected (pass) / it succeeds (fail)."],"milestone":"M2: Core Scheduling \u0026 Configuration","sourceIds":["DEC-017","DEC-035"],"orphan":false},{"id":"REQ-023","statement":"The system blocks removal or deactivation of a room, appointment type, or clinician that has future appointments, until those appointments are moved or cancelled.","acceptanceCriteria":["Given a room, type, or clinician has a future appointment, a removal/deactivation attempt is rejected and the future appointments are identified (pass) / removal succeeds anyway (fail).","Given all future appointments for that entity are moved or cancelled, the removal/deactivation attempt then succeeds (pass) / it remains blocked (fail)."],"milestone":"M2: Core Scheduling \u0026 Configuration","sourceIds":["DEC-021"],"orphan":false},{"id":"REQ-004","statement":"The system sends an automated text and email reminder before each appointment, at an interval the practice manager configures, through the clinic's existing messaging service, and records whether each reminder was sent.","acceptanceCriteria":["Given the configured interval, both a text and an email reminder are sent that far ahead of each appointment (pass) / no reminder is sent (fail).","Every reminder send attempt is recorded with a sent or not-sent status (pass) / no record exists (fail).","Given the practice manager edits the reminder interval, reminders for future appointments use the new interval (pass) / the previous interval still applies (fail)."],"milestone":"M3: Reminders \u0026 Confirmations","sourceIds":["DEC-004","DEC-043"],"orphan":false},{"id":"REQ-005","statement":"Each reminder includes a unique confirm link and a unique cancel link; tapping either applies the patient's response to that appointment immediately.","acceptanceCriteria":["Given a patient taps the confirm link, the appointment status updates to confirmed immediately (pass) / it remains unconfirmed (fail).","Given a patient taps the cancel link, the appointment is cancelled immediately and the slot becomes available (pass) / the appointment stays booked (fail).","A link cannot be used to affect a different patient's appointment (pass) / it does (fail)."],"milestone":"M3: Reminders \u0026 Confirmations","sourceIds":["DEC-005","BR-03"],"orphan":false},{"id":"REQ-006","statement":"Patients receive a confirmation message through the messaging service whenever their appointment is booked, moved, or cancelled, whether the action was taken by the patient or by staff.","acceptanceCriteria":["Given a receptionist reschedules a patient's appointment, the patient receives a confirmation reflecting the new time (pass) / no message is sent (fail).","Given any booking, reschedule, or cancellation event, a message send attempt is recorded (pass) / no record exists (fail)."],"milestone":"M3: Reminders \u0026 Confirmations","sourceIds":["DEC-025","DEC-043"],"orphan":false},{"id":"REQ-007","statement":"A patient completes an intake form before the visit, and each submitted form instance attaches to one specific appointment; a submitted form can never be deleted.","acceptanceCriteria":["Given a patient submits an intake form for an appointment, the form is retrievable from that appointment record (pass) / it is unlinked (fail).","A submitted intake form cannot be deleted by any user through the product (pass) / a delete action succeeds (fail)."],"milestone":"M4: Intake \u0026 Check-In","sourceIds":["DEC-006","DEC-029","DEC-039"],"orphan":false},{"id":"REQ-008","statement":"If the intake form was not completed ahead of the visit, the patient completes it on a tablet at the front desk during check-in, and the completed form attaches to that same appointment.","acceptanceCriteria":["Given an appointment with no submitted intake form at arrival, the check-in flow presents the intake form on the front-desk tablet (pass) / check-in proceeds without collecting it (fail).","The tablet intake screen fits a small touch-screen viewport with no horizontal scrolling of fields (pass) / fields overflow the viewport (fail)."],"milestone":"M4: Intake \u0026 Check-In","sourceIds":["DEC-007","DEC-045"],"orphan":false},{"id":"REQ-009","statement":"A receptionist checks a patient in on arrival, and the checked-in patient appears on the nurse's list for that day.","acceptanceCriteria":["Given a receptionist marks a patient checked-in, the patient appears on the nurse's day list without manual refresh action (pass) / the patient does not appear (fail).","The nurse's list shows only today's checked-in patients (pass) / it shows other days' patients (fail)."],"milestone":"M4: Intake \u0026 Check-In","sourceIds":["DEC-008"],"orphan":false},{"id":"REQ-010","statement":"A nurse can read a checked-in patient's intake form and mark that patient ready for the clinician; a nurse cannot book, reschedule, or cancel appointments.","acceptanceCriteria":["Given a nurse opens a checked-in patient's record, the submitted intake form content is viewable (pass) / it is hidden (fail).","Given a nurse marks a patient ready, that status appears on the assigned clinician's schedule (pass) / it does not propagate (fail).","No booking, reschedule, or cancel control is available to the nurse role (pass) / one is available (fail)."],"milestone":"M4: Intake \u0026 Check-In","sourceIds":["DEC-009","DEC-028"],"orphan":false},{"id":"REQ-011","statement":"A clinician sees patient readiness status directly on their own daily schedule, and sees only their own appointments.","acceptanceCriteria":["Given a nurse marks a patient ready, the ready indicator appears on that clinician's schedule for that appointment (pass) / it does not appear (fail).","A clinician's schedule shows only appointments assigned to that clinician (pass) / it shows another clinician's appointments (fail)."],"milestone":"M4: Intake \u0026 Check-In","sourceIds":["DEC-010","DEC-028"],"orphan":false},{"id":"REQ-012","statement":"A clinician marks a visit complete and, at that time, must select a visit summary code from the practice-manager-maintained fixed list; free-text entry is not offered.","acceptanceCriteria":["Given a clinician completes a visit, completion requires selecting one code from the configured list first (pass) / completion succeeds with no code (fail).","The code selection control has no free-text entry field (pass) / a free-text field is present (fail)."],"milestone":"M5: Visit Completion \u0026 Billing","sourceIds":["DEC-011","DEC-047","BR-06"],"orphan":false},{"id":"REQ-013","statement":"The moment a clinician marks a visit complete, the system automatically sends only the visit summary code and visit date to the clinic's billing system and reads back only a receipt confirmation, with no intake content included.","acceptanceCriteria":["Given a visit is marked complete, a transmission with only the code and date is sent to billing without manual clerk action (pass) / no transmission occurs until a clerk acts (fail).","Only a receipt confirmation is stored from the billing system's response (pass) / additional billing-system data is stored (fail).","No intake form content appears in the transmission (pass) / it does (fail)."],"milestone":"M5: Visit Completion \u0026 Billing","sourceIds":["DEC-044","DEC-040","BR-10"],"orphan":false},{"id":"REQ-014","statement":"The billing clerk sees completed visits with their summary codes and dates only, never intake form contents, and can manually mark each visit as sent to billing as a status separate from the automatic transmission.","acceptanceCriteria":["A completed visit's entry for the billing clerk shows only date and summary code, no intake content (pass) / intake content is visible (fail).","Given the billing clerk marks a visit as sent to billing, that status is stored distinct from the automatic transmission status and does not alter or repeat it (pass) / it interferes with the automatic transmission (fail)."],"milestone":"M5: Visit Completion \u0026 Billing","sourceIds":["DEC-012","DEC-028","DEC-037","BR-10"],"orphan":false},{"id":"REQ-032","statement":"Intake form contents are never included in any message sent through the messaging service or any data sent to the billing system.","acceptanceCriteria":["Given a reminder or confirmation message is generated, its content contains only scheduling information, never intake fields (pass) / intake data appears (fail).","Given a billing transmission is generated on visit completion, its payload contains only the summary code and date, never intake fields (pass) / intake data appears (fail)."],"milestone":"M5: Visit Completion \u0026 Billing","sourceIds":["DEC-040"],"orphan":false},{"id":"REQ-015","statement":"A receptionist can mark a patient as a no-show only after a practice-manager-configured grace period has elapsed past the appointment start time with no arrival recorded.","acceptanceCriteria":["Given the grace period has not elapsed, the no-show action is unavailable (pass) / it is available (fail).","Given the grace period has elapsed with no check-in, a receptionist can mark the appointment as a no-show (pass) / the action is blocked (fail).","Given the practice manager edits the grace period, future no-show eligibility checks use the new value (pass) / the previous grace period still applies (fail)."],"milestone":"M6: No-Show \u0026 Absence Handling","sourceIds":["DEC-013"],"orphan":false},{"id":"REQ-016","statement":"The system automatically flags a patient on the third no-show within a rolling six-month window and automatically lifts the flag once fewer than three no-shows remain in that trailing window; while flagged, only a receptionist can create a new booking for that patient.","acceptanceCriteria":["Given a patient's third no-show falls within the trailing six months, the flag is set without staff action (pass) / it requires a manual step (fail).","Given re-evaluation finds fewer than three no-shows in the trailing six months, the flag is removed automatically (pass) / it stays set (fail).","While flagged, a patient-initiated booking attempt is rejected and a receptionist-initiated booking still succeeds (pass) / the patient can self-book while flagged (fail)."],"milestone":"M6: No-Show \u0026 Absence Handling","sourceIds":["DEC-014","ASM-009","BR-12"],"orphan":false},{"id":"REQ-024","statement":"When a clinician is marked absent for a date range, the system blocks new bookings for that clinician's future slots in the range, cancels existing affected appointments, presents the receptionist with the affected list to rebook, and copies each affected patient's already-submitted intake form onto the newly created appointment while leaving the original form unchanged on the cancelled appointment.","acceptanceCriteria":["Given a clinician is marked absent for a date range, no new booking can be created for that clinician in that range (pass) / one succeeds (fail).","Given existing appointments fall in that range, each is cancelled and listed for the receptionist to rebook (pass) / an affected appointment is left unresolved or unlisted (fail).","Given an affected appointment had a submitted intake form, the new appointment carries an editable copy of it while the original stays unchanged on the cancelled appointment (pass) / the new appointment has no form or the original is altered (fail)."],"milestone":"M6: No-Show \u0026 Absence Handling","sourceIds":["DEC-022","BR-02","BR-11","ASM-008"],"orphan":false},{"id":"REQ-025","statement":"A patient who arrives for an appointment cancelled due to clinician absence is told the appointment is no longer active and is offered the next available slots to rebook, instead of being checked in.","acceptanceCriteria":["Given a patient arrives for a cancelled-due-to-absence appointment, the check-in screen shows an inactive-appointment message with next-available-slot options instead of a check-in confirmation (pass) / the patient is checked in normally (fail)."],"milestone":"M6: No-Show \u0026 Absence Handling","sourceIds":["DEC-023"],"orphan":false},{"id":"REQ-026","statement":"A patient who arrives after the no-show grace period, but before being marked no-show, can still be checked in, with the appointment flagged as late for the nurse and clinician.","acceptanceCriteria":["Given a patient arrives after the grace period but before a no-show mark, a receptionist can check the patient in (pass) / check-in is blocked (fail).","Given that check-in, a late flag is visible on both the nurse's list and the clinician's schedule for that appointment (pass) / the flag is missing from either view (fail)."],"milestone":"M6: No-Show \u0026 Absence Handling","sourceIds":["DEC-024"],"orphan":false},{"id":"REQ-020","statement":"The practice manager can view an on-demand monthly report showing visits, cancellations, no-shows, and average wait between check-in and ready, broken down per clinician; the report is not emailed automatically.","acceptanceCriteria":["Given a selected month, the report displays all four metrics broken out per clinician (pass) / a metric or breakdown is missing (fail).","The report is viewed on demand inside the product (pass) / an automatic email is sent instead or as well (fail)."],"milestone":"M7: Reporting \u0026 Audit","sourceIds":["DEC-018","ASM-004"],"orphan":false},{"id":"REQ-021","statement":"Every staff action on an appointment or intake form is logged with the acting user's identity and a timestamp, and log entries cannot be edited or deleted through the product.","acceptanceCriteria":["Given a staff member books, reschedules, cancels, checks in, marks ready, completes a visit, or marks no-show, a log entry records the user identity and timestamp (pass) / no entry is created (fail).","No interface control allows editing or deleting a log entry (pass) / one exists (fail)."],"milestone":"M7: Reporting \u0026 Audit","sourceIds":["DEC-019"],"orphan":false},{"id":"REQ-022","statement":"The practice manager can deactivate a staff account; deactivation blocks login but preserves that user's logged history of past actions.","acceptanceCriteria":["Given a practice manager deactivates a staff account, that account can no longer log in (pass) / login still succeeds (fail).","All prior logged actions by that user remain visible in audit records after deactivation (pass) / they disappear (fail)."],"milestone":"M7: Reporting \u0026 Audit","sourceIds":["DEC-020"],"orphan":false},{"id":"REQ-031","statement":"No role, including the practice manager, can delete a completed visit record or a submitted intake form.","acceptanceCriteria":["Given any role attempts to delete a completed visit, no delete control is available and the attempt fails (pass) / deletion succeeds (fail).","Given any role attempts to delete a submitted intake form, no delete control is available and the attempt fails (pass) / deletion succeeds (fail)."],"milestone":"M7: Reporting \u0026 Audit","sourceIds":["DEC-029","DEC-039"],"orphan":false},{"id":"REQ-027","statement":"A receptionist creates a patient account only by looking the patient up in the clinic's existing patient records system and sending a password-setup invitation; patients cannot self-register; if no match is found, no account is created.","acceptanceCriteria":["Given a receptionist finds a matching patient in the records system, a password-setup invitation is sent to that patient (pass) / none is sent (fail).","No self-registration entry point exists in the product (pass) / one exists (fail).","Given a records-system search returns no match, the account-creation action is unavailable and no local account is created (pass) / one is created anyway (fail)."],"milestone":"M1: Accounts \u0026 Access","sourceIds":["DEC-026","BR-05"],"orphan":false},{"id":"REQ-028","statement":"The system reads patient name and contact details from the clinic's existing patient records system for display only, and never writes to that system.","acceptanceCriteria":["Given a patient record is displayed, the name and contact details match the records-system source (pass) / they diverge without an update (fail).","No product action results in a write, update, or delete call to the patient records system (pass) / one occurs (fail)."],"milestone":"M1: Accounts \u0026 Access","sourceIds":["DEC-042","DEC-041"],"orphan":false},{"id":"REQ-029","statement":"Staff accounts, across all five staff roles, are created only by the practice manager; no other role or automated source creates them.","acceptanceCriteria":["Given a practice manager creates a staff account with an assigned role, that account can log in with that role's permissions (pass) / a non-practice-manager role can create a staff account (fail)."],"milestone":"M1: Accounts \u0026 Access","sourceIds":["DEC-027"],"orphan":false},{"id":"REQ-030","statement":"The system enforces role-scoped access: patients see only their own appointments and forms; receptionists see the full day schedule but not clinical notes or billing codes; nurses see only today's checked-in patients and cannot book; clinicians see only their own schedule and their own patients' intake forms; the billing clerk sees only completed visits and summary codes, never intake content; the practice manager sees all schedules and reports but records no clinical information.","acceptanceCriteria":["Given a patient attempts to view another patient's appointment or form, access is denied (pass) / granted (fail).","Given a receptionist attempts to view intake form contents or change a billing code, the action is denied (pass) / it succeeds (fail).","Given a clinician attempts to view another clinician's intake forms, access is denied (pass) / granted (fail).","Given the billing clerk attempts to view intake form contents, access is denied (pass) / granted (fail).","No control for recording clinical information is available to the practice manager role (pass) / one exists (fail)."],"milestone":"M1: Accounts \u0026 Access","sourceIds":["DEC-028","DEC-036","DEC-037","DEC-038"],"orphan":false},{"id":"REQ-033","statement":"The system writes appointment scheduling data (patient name, time, duration, room, clinician, appointment type) into the clinic's existing shared calendar one-way on create, reschedule, and cancel, never reads bookings back from it, and excludes intake content, summary codes, and billing information from the feed; this feed's pre-existing shared visibility across all clinicians is unaffected by in-product role permissions.","acceptanceCriteria":["Given an appointment is created, rescheduled, or cancelled, the shared calendar entry reflects the change (pass) / it is not updated (fail).","The calendar write payload contains only patient name, time, duration, room, clinician, and appointment type (pass) / it contains intake, code, or billing data (fail).","No product action reads or imports a booking from the shared calendar (pass) / one is imported (fail)."],"milestone":"M8: Calendar Integration \u0026 Tablet Optimization","sourceIds":["DEC-046","BR-01","BR-08","ASM-006","BR-09","ASM-007"],"orphan":false},{"id":"REQ-034","statement":"All front-desk and clinical staff screens used at the point of care (check-in, tablet intake, no-show marking) operate correctly on small touch-screen tablets.","acceptanceCriteria":["Given the check-in and intake screens render on a small tablet touch-screen viewport, all controls are reachable and operable by touch with no horizontal scrolling (pass) / a control is unreachable or requires horizontal scroll (fail)."],"milestone":"M8: Calendar Integration \u0026 Tablet Optimization","sourceIds":["DEC-045"],"orphan":false}],"sources":[{"id":"DEC-001","kind":"decision","statement":"Patients book an appointment by type with an available clinician and room; the slot becomes unavailable to other patients immediately on booking.","resolved":true,"usedBy":["REQ-001"]},{"id":"DEC-002","kind":"decision","statement":"Patients can reschedule or cancel their own appointment up until a cut-off time set by the practice manager.","resolved":true,"usedBy":["REQ-002"]},{"id":"DEC-003","kind":"decision","statement":"Receptionists can book, reschedule, and cancel an appointment on behalf of any patient, with no cut-off restriction.","resolved":true,"usedBy":["REQ-003"]},{"id":"DEC-015","kind":"decision","statement":"The practice manager sets clinic hours, rooms, appointment types, and appointment durations.","resolved":true,"usedBy":["REQ-017"]},{"id":"DEC-016","kind":"decision","statement":"Rooms cannot be double-booked, and the schedule view shows room assignment for each appointment.","resolved":true,"usedBy":["REQ-018"]},{"id":"DEC-035","kind":"decision","statement":"Prohibition, must never happen in any version: a room or clinician is ever double-booked.","resolved":true,"usedBy":["REQ-018","REQ-019"]},{"id":"DEC-017","kind":"decision","statement":"Clinicians cannot be double-booked across appointments.","resolved":true,"usedBy":["REQ-019"]},{"id":"DEC-021","kind":"decision","statement":"A room, appointment type, or clinician with future appointments cannot be removed or deactivated until those appointments are moved or cancelled.","resolved":true,"usedBy":["REQ-023"]},{"id":"DEC-004","kind":"decision","statement":"Automated reminders are sent before each appointment at timing set by the practice manager, through the clinic's existing messaging service (text and email).","resolved":true,"usedBy":["REQ-004"]},{"id":"DEC-043","kind":"decision","statement":"Integration: the product sends reminders and confirmations through the clinic's existing messaging service and records whether each message was sent.","resolved":true,"usedBy":["REQ-004","REQ-006"]},{"id":"DEC-005","kind":"decision","statement":"A reminder includes a way for the patient to confirm or cancel the appointment, and that response is applied immediately.","resolved":true,"usedBy":["REQ-005"]},{"id":"BR-03","kind":"resolution","statement":"Reminders include a unique confirm link and a unique cancel link per appointment; tapping either applies the response immediately without requiring reply-text parsing.","resolved":true,"usedBy":["REQ-005"]},{"id":"DEC-025","kind":"decision","statement":"Patients receive a confirmation message when their appointment is booked, moved, or cancelled.","resolved":true,"usedBy":["REQ-006"]},{"id":"DEC-047","kind":"decision","statement":"The practice manager maintains a fixed list of visit summary codes, alongside appointment types and rooms; clinicians select a code from that list when completing a visit rather than typing free text.","resolved":true,"usedBy":["REQ-017","REQ-012"]},{"id":"DEC-006","kind":"decision","statement":"Patients complete an intake form before the visit; the form is attached to that specific appointment.","resolved":true,"usedBy":["REQ-007"]},{"id":"DEC-007","kind":"decision","statement":"If the intake form is not completed ahead of time, the patient completes it on a tablet at the front desk during check-in.","resolved":true,"usedBy":["REQ-008"]},{"id":"DEC-008","kind":"decision","statement":"Receptionists check a patient in on arrival; a checked-in patient appears on the nurse's list for that day.","resolved":true,"usedBy":["REQ-009"]},{"id":"DEC-009","kind":"decision","statement":"Nurses can read a checked-in patient's intake form and mark that patient ready for the clinician.","resolved":true,"usedBy":["REQ-010"]},{"id":"DEC-010","kind":"decision","statement":"Clinicians see patient readiness status on their own schedule.","resolved":true,"usedBy":["REQ-011"]},{"id":"DEC-011","kind":"decision","statement":"Clinicians mark a visit complete and record a visit summary code at that time.","resolved":true,"usedBy":["REQ-012"]},{"id":"BR-06","kind":"resolution","statement":"Practice manager maintains a fixed list of visit summary codes; clinicians select from that list when completing a visit.","resolved":true,"usedBy":["REQ-012"]},{"id":"DEC-036","kind":"decision","statement":"Prohibition, must never happen in any version: a patient can see another patient's appointments or intake forms.","resolved":true,"usedBy":["REQ-002","REQ-030"]},{"id":"DEC-044","kind":"decision","statement":"Integration: on visit completion, the product sends the visit summary code and date to the clinic's billing system and reads back only a receipt confirmation.","resolved":true,"usedBy":["REQ-013"]},{"id":"BR-10","kind":"resolution","statement":"Applied as a compatible reading: the product automatically sends the visit summary code and date to the billing system the moment a clinician marks a visit complete, satisfying the mandatory integration requirement, and the billing clerk's manual 'mark as sent to billing' action remains a separate in-product status the clerk sets when reviewing completed visits, used for their own tracking and never gating or duplicating the automatic transmission.","resolved":true,"usedBy":["REQ-013","REQ-014"]},{"id":"DEC-040","kind":"decision","statement":"Prohibition, must never happen in any version: intake form contents are sent to the billing system or the messaging service.","resolved":true,"usedBy":["REQ-013","REQ-032"]},{"id":"DEC-012","kind":"decision","statement":"The billing clerk sees completed visits with their summary codes and marks each as sent to billing.","resolved":true,"usedBy":["REQ-014"]},{"id":"DEC-029","kind":"decision","statement":"A completed visit and a submitted intake form can never be deleted by any user.","resolved":true,"usedBy":["REQ-007","REQ-031"]},{"id":"DEC-039","kind":"decision","statement":"Prohibition, must never happen in any version: a completed visit or submitted intake form is deleted.","resolved":true,"usedBy":["REQ-007","REQ-031"]},{"id":"DEC-028","kind":"decision","statement":"Role permissions: patients see only their own appointments and forms; receptionists see the day's full schedule and cannot see clinical notes or change billing codes; nurses see only the day's checked-in patients and cannot book appointments; clinicians see only their own schedule and their own patients' intake forms; the billing clerk sees completed visits and summary codes only, never intake form contents; the practice manager sees all schedules and reports but does not record clinical information.","resolved":true,"usedBy":["REQ-010","REQ-011","REQ-014","REQ-030"]},{"id":"DEC-013","kind":"decision","statement":"Receptionists mark a patient as a no-show after a grace period (set by the practice manager) has passed with no arrival.","resolved":true,"usedBy":["REQ-015"]},{"id":"DEC-014","kind":"decision","statement":"A patient with three no-shows within six months is automatically flagged; only a receptionist can book a further appointment for that patient while flagged.","resolved":true,"usedBy":["REQ-016"]},{"id":"ASM-009","kind":"assumption","statement":"The three-no-shows-in-six-months flag is evaluated dynamically against a rolling six-month window from the current date; the flag lifts automatically once fewer than three no-shows remain within the trailing six months, with no manual unflag action required from staff.","resolved":true,"usedBy":["REQ-016"]},{"id":"BR-12","kind":"resolution","statement":"The no-show flag is recalculated from a rolling six-month window; it lifts automatically once fewer than three no-shows remain within the trailing six months, and no manual staff action is provided to remove it.","resolved":true,"usedBy":["REQ-016"]},{"id":"DEC-022","kind":"decision","statement":"When a clinician is marked absent, their future slots are blocked from new booking, existing affected appointments are cancelled by the clinic, and the receptionist is shown those appointments and rebooks each patient into a new slot.","resolved":true,"usedBy":["REQ-024"]},{"id":"BR-02","kind":"resolution","statement":"Clinician-absence handling implemented as cancel-then-rebook, presented to receptionists as moving affected appointments; all three cited statements remain true under this single behavior.","resolved":true,"usedBy":["REQ-024"]},{"id":"BR-11","kind":"resolution","statement":"The product copies the patient's already-submitted intake form onto the new appointment created during a clinician-absence rebooking; the original form stays attached to the cancelled appointment as an untouched historical record, and the patient can edit the copy before the new visit if needed.","resolved":true,"usedBy":["REQ-024"]},{"id":"ASM-008","kind":"assumption","statement":"When a clinician-absence cancellation triggers a rebooking, the product automatically copies the patient's already-submitted intake form onto the new appointment rather than requiring resubmission; the original form instance remains attached to the cancelled appointment as an unchanged historical record, and the patient may edit the copy before the new visit.","resolved":true,"usedBy":["REQ-024"]},{"id":"DEC-045","kind":"decision","statement":"The product must operate well on small touch-screen tablets, since staff use it at the front desk on tablets.","resolved":true,"usedBy":["REQ-008","REQ-034"]},{"id":"DEC-023","kind":"decision","statement":"A patient who arrives after a cancellation caused by clinician absence is told the appointment is no longer active and is offered the next available slots to rebook, instead of being checked in.","resolved":true,"usedBy":["REQ-025"]},{"id":"DEC-024","kind":"decision","statement":"A patient arriving after the no-show grace period can still be checked in, but the appointment is flagged as late for the nurse and clinician to see.","resolved":true,"usedBy":["REQ-026"]},{"id":"DEC-037","kind":"decision","statement":"Prohibition, must never happen in any version: a receptionist or the billing clerk can see intake form contents.","resolved":true,"usedBy":["REQ-014","REQ-030"]},{"id":"DEC-018","kind":"decision","statement":"The monthly report available to the practice manager shows visits, cancellations, no-shows, and average wait between check-in and ready, broken down per clinician.","resolved":true,"usedBy":["REQ-020"]},{"id":"ASM-004","kind":"assumption","statement":"The monthly report is viewed on demand inside the product by the practice manager; it is not emailed automatically.","resolved":true,"usedBy":["REQ-020"]},{"id":"DEC-019","kind":"decision","statement":"Every staff action taken on an appointment or intake form is logged with the acting user's identity and a timestamp.","resolved":true,"usedBy":["REQ-021"]},{"id":"DEC-020","kind":"decision","statement":"The practice manager can deactivate a staff account without deleting that staff member's history of past actions.","resolved":true,"usedBy":["REQ-022"]},{"id":"DEC-026","kind":"decision","statement":"Patient accounts are created only by a receptionist, who looks the patient up in the clinic's existing patient records system and sends an invitation for the patient to set a password; patients cannot self-register.","resolved":true,"usedBy":["REQ-027"]},{"id":"BR-05","kind":"resolution","statement":"Account creation is blocked until a matching patient exists in the records system; no fallback manual-entry account creation is provided in this product.","resolved":true,"usedBy":["REQ-027"]},{"id":"DEC-042","kind":"decision","statement":"Integration: the product reads patient name and contact details from the existing patient records system for display only; it never writes to that system.","resolved":true,"usedBy":["REQ-028"]},{"id":"DEC-041","kind":"decision","statement":"Prohibition, must never happen in any version: the product writes or changes any data in the clinic's patient records system.","resolved":true,"usedBy":["REQ-028"]},{"id":"DEC-027","kind":"decision","statement":"Staff accounts are created only by the practice manager.","resolved":true,"usedBy":["REQ-029"]},{"id":"DEC-038","kind":"decision","statement":"Prohibition, must never happen in any version: a clinician can see another clinician's intake forms.","resolved":true,"usedBy":["REQ-030"]},{"id":"DEC-046","kind":"decision","statement":"Integration: the clinic's existing shared calendar is kept in place; the product writes appointment data into it one-way so clinicians keep one familiar view, and the product never reads bookings from that calendar.","resolved":true,"usedBy":["REQ-033"]},{"id":"BR-01","kind":"resolution","statement":"Keep the existing shared calendar as the source clinicians already trust, and have the product write into it while never reading bookings from it.","resolved":true,"usedBy":["REQ-033"]},{"id":"BR-08","kind":"resolution","statement":"The calendar write feed is limited to patient name, appointment time, duration, room, clinician, and appointment type; intake form contents, visit summary codes, and billing information are excluded from the feed, consistent with the existing prohibition on sending intake data to other external systems.","resolved":true,"usedBy":["REQ-033"]},{"id":"ASM-006","kind":"assumption","statement":"Only scheduling-relevant fields — patient name, appointment time, duration, room, clinician, and appointment type — are written to the external shared calendar feed; intake form contents, visit summary codes, and billing information are never included in that feed.","resolved":true,"usedBy":["REQ-033"]},{"id":"BR-09","kind":"resolution","statement":"Recorded as a compatible reading: the in-product rule that a clinician cannot see another clinician's patients (DEC-028) governs the product's own interface only, and the external shared calendar kept per the client's Q-01 answer keeps its pre-existing shared, clinic-wide visibility, limited to the minimum scheduling fields already defined for that feed (patient name, time, duration, room, clinician, appointment type), never intake or billing data.","resolved":true,"usedBy":["REQ-033"]},{"id":"ASM-007","kind":"assumption","statement":"The clinician permission restriction limiting visibility to a clinician's own patients applies only within the product's own interface; the external shared calendar kept per the client's Q-01 decision retains its pre-existing shared, clinic-wide visibility across all clinicians and is not restricted by in-product role permissions.","resolved":true,"usedBy":["REQ-033"]}],"orphanIds":[]}</script><script>(function () {
+  "use strict";
+
+  var SVG_NS = ["http", "://www.w3.org/2000/svg"].join("");
+
+  var dataNode = document.getElementById("map-data");
+  if (!dataNode) return;
+  var data = JSON.parse(dataNode.textContent);
+
+  var stage = document.getElementById("stage");
+  var tree = document.getElementById("tree");
+  var wires = document.getElementById("wires");
+
+  /* Column origins and widths, in px. The gaps between columns leave room
+     for the connector's vertical run without it touching either node. */
+  var COLUMN_X = { root: 0, milestone: 260, requirement: 560, source: 940 };
+  var COLUMN_W = { root: 200, milestone: 240, requirement: 320, source: 300 };
+  var GAP = 12;
+  var STUB = 30;
+  var RADIUS = 8;
+
+  var items = [];
+  var byElement = new Map();
+  var sourceById = new Map();
+  var requirementById = new Map();
+  var i;
+
+  for (i = 0; i < data.sources.length; i += 1) sourceById.set(data.sources[i].id, data.sources[i]);
+  for (i = 0; i < data.requirements.length; i += 1) requirementById.set(data.requirements[i].id, data.requirements[i]);
+
+  function span(className, text) {
+    var node = document.createElement("span");
+    node.className = className;
+    if (text !== undefined && text !== null) node.textContent = text;
+    return node;
+  }
+
+  function addDisclosure(record, name) {
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "disclosure";
+    button.setAttribute("aria-expanded", "false");
+    record.disclosure = button;
+    record.name = name;
+    record.el.appendChild(button);
+  }
+
+  function statement(text) {
+    var node = span("statement", text);
+    if (text) node.setAttribute("title", text);
+    return node;
+  }
+
+  /* A node is a plain wrapper carrying the data attributes and the state
+     classes, with the interactive parts as siblings inside it: a button that
+     selects, a button that expands, and the Also-under links. A link inside a
+     button is an invalid content model, which is why the card is not itself
+     one. */
+  function makeNode(kind, id, parent) {
+    var wrapper = document.createElement("div");
+    wrapper.className = "node";
+    wrapper.setAttribute("data-node", kind);
+    wrapper.setAttribute("data-id", id);
+    wrapper.style.width = COLUMN_W[kind] + "px";
+    var main = document.createElement("button");
+    main.type = "button";
+    main.className = "node-main";
+    wrapper.appendChild(main);
+    var record = {
+      el: wrapper, main: main, disclosure: null, name: id,
+      kind: kind, id: id, parent: parent, children: [],
+      expanded: false, height: 0, x: COLUMN_X[kind], w: COLUMN_W[kind], y: 0, placed: false
+    };
+    items.push(record);
+    byElement.set(wrapper, record);
+    if (parent) parent.children.push(record);
+    tree.appendChild(wrapper);
+    return record;
+  }
+
+  function kindLabel(source) {
+    return source && source.resolved
+      ? String(source.kind).split("_").join(" ").toUpperCase()
+      : "NOT IN THE APPROVED BRIEF";
+  }
+
+  function plural(count, one, many) {
+    return String(count) + " " + (count === 1 ? one : many);
+  }
+
+  /* ---- build the tree ---- */
+
+  var root = makeNode("root", "root", null);
+  root.main.appendChild(span("label", "PRODUCT"));
+  root.main.appendChild(span("name", data.title));
+  root.main.appendChild(span("meta", plural(data.requirements.length, "REQUIREMENT", "REQUIREMENTS")));
+  root.main.appendChild(span("meta", plural(data.milestones.length, "MILESTONE", "MILESTONES")));
+  addDisclosure(root, data.title);
+
+  for (i = 0; i < data.milestones.length; i += 1) {
+    var milestone = data.milestones[i];
+    var mNode = makeNode("milestone", milestone.label, root);
+    mNode.main.appendChild(span("label", milestone.token));
+    mNode.main.appendChild(span("name", milestone.label));
+    mNode.main.appendChild(span("meta", plural(milestone.requirementIds.length, "REQUIREMENT", "REQUIREMENTS")));
+    addDisclosure(mNode, milestone.label);
+
+    for (var j = 0; j < milestone.requirementIds.length; j += 1) {
+      var requirement = requirementById.get(milestone.requirementIds[j]);
+      if (!requirement) continue;
+      var rNode = makeNode("requirement", requirement.id, mNode);
+      rNode.main.appendChild(span("label", requirement.id));
+      rNode.main.appendChild(statement(requirement.statement));
+      rNode.main.appendChild(span("meta", plural(requirement.sourceIds.length, "SOURCE", "SOURCES")
+        + " · " + plural(requirement.acceptanceCriteria.length, "ACCEPTANCE CRITERION", "ACCEPTANCE CRITERIA")));
+      if (requirement.sourceIds.length > 0) addDisclosure(rNode, requirement.id);
+      if (requirement.orphan) rNode.el.setAttribute("data-orphan", "true");
+
+      for (var k = 0; k < requirement.sourceIds.length; k += 1) {
+        var sourceId = requirement.sourceIds[k];
+        var source = sourceById.get(sourceId);
+        var sNode = makeNode("source", sourceId, rNode);
+        sNode.el.setAttribute("data-source-id", sourceId);
+        sNode.el.setAttribute("data-parent", requirement.id);
+        sNode.main.appendChild(span("label", sourceId));
+        sNode.main.appendChild(statement(source ? source.statement : ""));
+        sNode.main.appendChild(span("meta", kindLabel(source)));
+        if (source && !source.resolved) sNode.el.setAttribute("data-orphan", "true");
+
+        var usedBy = source ? source.usedBy : [];
+        if (usedBy.length > 1) {
+          sNode.main.appendChild(span("badge", "USED BY " + plural(usedBy.length, "REQUIREMENT", "REQUIREMENTS")));
+          var also = document.createElement("div");
+          also.className = "also-under";
+          also.appendChild(document.createTextNode("Also under "));
+          var others = [];
+          for (var o = 0; o < usedBy.length; o += 1) if (usedBy[o] !== requirement.id) others.push(usedBy[o]);
+          for (var p = 0; p < others.length; p += 1) {
+            if (p > 0) also.appendChild(document.createTextNode(" · "));
+            var link = document.createElement("a");
+            link.setAttribute("href", "#");
+            link.setAttribute("data-goto", others[p]);
+            link.textContent = others[p];
+            also.appendChild(link);
+          }
+          sNode.el.appendChild(also);
+        }
+      }
+    }
+  }
+
+  /* ---- one lowercased haystack per node, for Find ---- */
+
+  for (i = 0; i < items.length; i += 1) {
+    var subject = items[i].kind === "source" ? sourceById.get(items[i].id)
+      : items[i].kind === "requirement" ? requirementById.get(items[i].id) : null;
+    items[i].search = (items[i].id + " " + (subject ? subject.statement : "")).toLowerCase();
+  }
+
+  /* ---- measure once, while everything is still rendered ---- */
+
+  for (i = 0; i < items.length; i += 1) items[i].height = items[i].el.offsetHeight;
+  /* Hidden until the first layout places them, so nothing animates in from
+     the origin on load. */
+  for (i = 0; i < items.length; i += 1) items[i].el.hidden = true;
+
+  function setExpanded(record, open) {
+    if (record.children.length === 0 || !record.disclosure) return;
+    record.expanded = open;
+    record.disclosure.setAttribute("aria-expanded", open ? "true" : "false");
+    record.disclosure.setAttribute("aria-label", (open ? "Collapse " : "Expand ") + record.name);
+    /* A root or milestone body toggles too, so it is a second expander and
+       must announce the same state. A requirement's body selects and carries
+       aria-pressed; the two attributes on one control would contradict. */
+    if (record.kind === "root" || record.kind === "milestone") {
+      record.main.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+  }
+
+  for (i = 0; i < items.length; i += 1) setExpanded(items[i], false);
+  setExpanded(root, true);
+
+  /* ---- layout: depth to column, visible leaf order to row ---- */
+
+  function layout() {
+    var cursor = 0;
+    var columnBottom = { root: 0, milestone: 0, requirement: 0, source: 0 };
+    var right = 0;
+    for (var n = 0; n < items.length; n += 1) items[n].placed = false;
+
+    function place(record) {
+      record.placed = true;
+      var kids = record.expanded ? record.children : [];
+      var y;
+      if (kids.length === 0) {
+        y = Math.max(cursor, columnBottom[record.kind]);
+      } else {
+        for (var c = 0; c < kids.length; c += 1) place(kids[c]);
+        var first = kids[0];
+        var last = kids[kids.length - 1];
+        var centre = ((first.y + first.height / 2) + (last.y + last.height / 2)) / 2;
+        y = Math.max(centre - record.height / 2, columnBottom[record.kind]);
+      }
+      record.y = y;
+      columnBottom[record.kind] = y + record.height + GAP;
+      if (columnBottom[record.kind] > cursor) cursor = columnBottom[record.kind];
+      if (record.x + record.w > right) right = record.x + record.w;
+    }
+
+    place(root);
+
+    /* A node that was not on screen has no position to travel from, so it is
+       placed with transitions suppressed; nodes already visible glide. */
+    var appeared = [];
+    for (var m = 0; m < items.length; m += 1) {
+      var record = items[m];
+      if (record.placed) {
+        if (record.el.hidden) { record.el.classList.add("snap"); appeared.push(record.el); }
+        record.el.hidden = false;
+        record.el.style.left = record.x + "px";
+        record.el.style.top = record.y + "px";
+      } else {
+        record.el.hidden = true;
+      }
+    }
+    if (appeared.length > 0) {
+      void tree.offsetHeight;
+      for (var a = 0; a < appeared.length; a += 1) appeared[a].classList.remove("snap");
+    }
+
+    var width = right + 24;
+    var height = Math.max(cursor, 0) + 24;
+    tree.style.width = width + "px";
+    tree.style.height = height + "px";
+    wires.setAttribute("width", String(width));
+    wires.setAttribute("height", String(height));
+    wires.setAttribute("viewBox", "0 0 " + width + " " + height);
+    wires.style.width = width + "px";
+    wires.style.height = height + "px";
+    /* The stage is the scroll container, deliberately: a node sized page
+       would scroll the document instead, and scrolling a node clear of the
+       fixed panel would then be impossible. */
+
+    /* Collapse-all can take the hovered node off screen without ever firing
+       a pointerleave, so the hover is dropped here rather than left stuck. */
+    if (hovered && !hovered.record.placed) hovered = null;
+    applyHighlights();
+    drawWires();
+  }
+
+  function elbow(x1, y1, x2, y2) {
+    var dy = y2 - y1;
+    if (Math.abs(dy) < 0.5) return "M" + x1 + "," + y1 + " H" + x2;
+    var sy = dy > 0 ? 1 : -1;
+    var r = Math.min(RADIUS, Math.abs(dy) / 2);
+    var mid = x1 + STUB;
+    return "M" + x1 + "," + y1
+      + " H" + (mid - r)
+      + " A" + r + "," + r + " 0 0 " + (sy > 0 ? 1 : 0) + " " + mid + "," + (y1 + r * sy)
+      + " V" + (y2 - r * sy)
+      + " A" + r + "," + r + " 0 0 " + (sy > 0 ? 0 : 1) + " " + (mid + r) + "," + y2
+      + " H" + x2;
+  }
+
+  function drawWires() {
+    while (wires.firstChild) wires.removeChild(wires.firstChild);
+    for (var n = 0; n < items.length; n += 1) {
+      var record = items[n];
+      if (!record.placed || !record.expanded) continue;
+      for (var c = 0; c < record.children.length; c += 1) {
+        var child = record.children[c];
+        if (!child.placed) continue;
+        var path = document.createElementNS(SVG_NS, "path");
+        path.setAttribute("class", selection && lit.has(record) && lit.has(child) ? "wire is-lit" : "wire");
+        path.setAttribute("d", elbow(record.x + record.w, record.y + record.height / 2, child.x, child.y + child.height / 2));
+        wires.appendChild(path);
+      }
+    }
+  }
+
+  /* ---- selection, preview and the panel ---- */
+
+  var panel = document.getElementById("panel");
+  var panelTitle = document.getElementById("panel-title");
+  var panelBody = document.getElementById("panel-body");
+  var panelClose = document.getElementById("panel-close");
+  var orphanButton = document.getElementById("orphan-count");
+  var findField = document.getElementById("find");
+
+  var copiesBySource = new Map();
+  var recordByRequirement = new Map();
+  for (i = 0; i < items.length; i += 1) {
+    if (items[i].kind === "source") {
+      var copies = copiesBySource.get(items[i].id);
+      if (!copies) { copies = []; copiesBySource.set(items[i].id, copies); }
+      copies.push(items[i]);
+    }
+    if (items[i].kind === "requirement") recordByRequirement.set(items[i].id, items[i]);
+  }
+
+  /* The one selection, one hover and one find result set the whole page is
+     derived from. Nodes are never looked up by a selector built from data:
+     a milestone label may carry spaces, quotes or an ampersand. */
+  var selection = null;
+  var hovered = null;
+  var found = [];
+  var lit = new Set();
+
+  function highlightSets() {
+    var selected = new Set();
+    var related = new Set();
+    var n, copies, c;
+    if (!selection) return { selected: selected, related: related };
+    if (selection.kind === "source") {
+      copies = copiesBySource.get(selection.id) || [];
+      for (c = 0; c < copies.length; c += 1) selected.add(copies[c]);
+      var source = sourceById.get(selection.id);
+      var usedBy = source ? source.usedBy : [];
+      for (n = 0; n < usedBy.length; n += 1) {
+        var user = recordByRequirement.get(usedBy[n]);
+        if (!user) continue;
+        related.add(user);
+        if (user.parent) related.add(user.parent);
+      }
+    } else if (selection.kind === "requirement") {
+      var record = recordByRequirement.get(selection.id);
+      if (record) {
+        selected.add(record);
+        if (record.parent) related.add(record.parent);
+        var requirement = requirementById.get(selection.id);
+        var ids = requirement ? requirement.sourceIds : [];
+        for (n = 0; n < ids.length; n += 1) {
+          copies = copiesBySource.get(ids[n]) || [];
+          for (c = 0; c < copies.length; c += 1) related.add(copies[c]);
+        }
+      }
+    } else {
+      for (n = 0; n < data.orphanIds.length; n += 1) {
+        var orphan = recordByRequirement.get(data.orphanIds[n]);
+        if (!orphan) continue;
+        selected.add(orphan);
+        if (orphan.parent) related.add(orphan.parent);
+      }
+    }
+    return { selected: selected, related: related };
+  }
+
+  function applyHighlights() {
+    var sets = highlightSets();
+    var preview = new Set();
+    var hit = new Set();
+    var n;
+    for (n = 0; n < found.length; n += 1) preview.add(found[n]);
+    if (hovered) {
+      var copies = copiesBySource.get(hovered.record.id) || [];
+      for (n = 0; n < copies.length; n += 1) if (copies[n] !== hovered.record) preview.add(copies[n]);
+    }
+
+    function markCollapsedAncestors(record) {
+      var up = record.parent;
+      while (up) {
+        if (!up.expanded) hit.add(up);
+        up = up.parent;
+      }
+    }
+
+    var active = selection !== null;
+    lit = new Set();
+    for (n = 0; n < items.length; n += 1) {
+      var record = items[n];
+      var isSelected = sets.selected.has(record);
+      var isRelated = !isSelected && sets.related.has(record);
+      record.el.classList.toggle("is-selected", isSelected);
+      record.el.classList.toggle("is-related", isRelated);
+      record.el.classList.toggle("is-dimmed", active && !isSelected && !isRelated);
+      /* A selected node already carries the accent; a second outline on top
+         of it reads as a different state than it is. */
+      record.el.classList.toggle("is-preview", preview.has(record) && !isSelected);
+      if (isSelected) record.main.setAttribute("aria-pressed", "true");
+      else record.main.removeAttribute("aria-pressed");
+      if (isSelected || isRelated || preview.has(record)) markCollapsedAncestors(record);
+      if (!active || isSelected || isRelated) lit.add(record);
+    }
+    for (n = 0; n < items.length; n += 1) items[n].el.classList.toggle("has-hit", hit.has(items[n]));
+  }
+
+  function refresh() {
+    applyHighlights();
+    drawWires();
+  }
+
+  /* ---- the panel ---- */
+
+  function panelLabel(text) {
+    return span("panel-label", text);
+  }
+
+  function paragraph(text) {
+    var node = document.createElement("p");
+    node.className = "panel-text";
+    node.textContent = text;
+    return node;
+  }
+
+  function bulletList(values, asLinks) {
+    var list = document.createElement("ul");
+    for (var n = 0; n < values.length; n += 1) {
+      var item = document.createElement("li");
+      if (asLinks) {
+        var link = document.createElement("a");
+        link.setAttribute("href", "#");
+        link.setAttribute("data-goto", values[n]);
+        link.textContent = values[n];
+        item.appendChild(link);
+      } else {
+        item.textContent = values[n];
+      }
+      list.appendChild(item);
+    }
+    return list;
+  }
+
+  function openPanel(title, blocks) {
+    panelTitle.textContent = title;
+    while (panelBody.firstChild) panelBody.removeChild(panelBody.firstChild);
+    for (var n = 0; n < blocks.length; n += 1) panelBody.appendChild(blocks[n]);
+    panel.hidden = false;
+    /* The page reserves the panel's width while it is open, so a node the
+       reader just selected can be scrolled clear of it. */
+    document.body.classList.add("panel-open");
+  }
+
+  function closePanel() {
+    panel.hidden = true;
+    document.body.classList.remove("panel-open");
+  }
+
+  function reveal(record) {
+    if (record.el.hidden) return;
+    record.el.scrollIntoView({ block: "nearest", inline: "nearest" });
+    if (panel.hidden) return;
+    /* Below the stylesheet's breakpoint the panel is a bottom sheet rather
+       than a right-hand aside. It is recognised by where it sits, not by how
+       wide it is: a fixed width:100% panel measures the initial containing
+       block, which excludes a classic scrollbar, while window.innerWidth
+       includes one, so a width test reads the sheet as an aside on every
+       platform that draws real scrollbars. The sheet starts at the left edge
+       and the aside never does. */
+    var sheet = panel.getBoundingClientRect();
+    if (sheet.left > 0) return;
+    var overlap = record.el.getBoundingClientRect().bottom - sheet.top;
+    if (overlap > 0) window.scrollBy(0, overlap + GAP);
+  }
+
+  function selectSource(record) {
+    var source = sourceById.get(record.id);
+    var usedBy = source ? source.usedBy : [];
+    selection = { kind: "source", id: record.id };
+    refresh();
+    openPanel(record.id + " · used by " + plural(usedBy.length, "requirement", "requirements"), [
+      panelLabel("Source"),
+      paragraph(kindLabel(source)),
+      panelLabel("Statement"),
+      paragraph(source ? source.statement : ""),
+      panelLabel("Used by"),
+      bulletList(usedBy, true)
+    ]);
+    reveal(record);
+  }
+
+  function selectRequirement(record) {
+    var requirement = requirementById.get(record.id);
+    var sourceLines = [];
+    var ids = requirement ? requirement.sourceIds : [];
+    for (var n = 0; n < ids.length; n += 1) {
+      sourceLines.push(ids[n] + " — " + kindLabel(sourceById.get(ids[n])));
+    }
+    selection = { kind: "requirement", id: record.id };
+    refresh();
+    openPanel(record.id, [
+      panelLabel("Statement"),
+      paragraph(requirement ? requirement.statement : ""),
+      panelLabel("Acceptance criteria"),
+      requirement && requirement.acceptanceCriteria.length > 0
+        ? bulletList(requirement.acceptanceCriteria, false)
+        : paragraph("None stated."),
+      panelLabel("Approved sources"),
+      sourceLines.length > 0 ? bulletList(sourceLines, false) : paragraph("None — this requirement has no approved source.")
+    ]);
+    /* The point of selecting a requirement is to read its sources, so the
+       source column is brought out from under the panel first; the
+       requirement itself is then still on screen and the second call is a
+       no-op, but it is what guarantees the selected node is not covered. */
+    for (n = 0; n < ids.length; n += 1) {
+      var copies = copiesBySource.get(ids[n]) || [];
+      for (var c = 0; c < copies.length; c += 1) {
+        if (copies[c].parent === record && !copies[c].el.hidden) { reveal(copies[c]); break; }
+      }
+    }
+    reveal(record);
+  }
+
+  function selectOrphans() {
+    var n;
+    for (n = 0; n < data.orphanIds.length; n += 1) {
+      var record = recordByRequirement.get(data.orphanIds[n]);
+      if (record) expandAncestors(record);
+    }
+    selection = { kind: "orphans", id: "orphans" };
+    layout();
+    openPanel(plural(data.orphanIds.length, "requirement", "requirements") + " without an approved source", [
+      panelLabel("Requirements"),
+      bulletList(data.orphanIds, true)
+    ]);
+    var first = recordByRequirement.get(data.orphanIds[0]);
+    if (first) reveal(first);
+  }
+
+  function clearSelection() {
+    selection = null;
+    closePanel();
+    refresh();
+  }
+
+  /* ---- walking to a requirement, from a copy's Also-under or the panel ---- */
+
+  function expandAncestors(record) {
+    var up = record.parent;
+    while (up) {
+      setExpanded(up, true);
+      up = up.parent;
+    }
+  }
+
+  function goTo(id) {
+    var record = recordByRequirement.get(id);
+    if (!record) return;
+    expandAncestors(record);
+    layout();
+    reveal(record);
+    record.main.focus();
+  }
+
+  /* ---- interaction ---- */
+
+  tree.addEventListener("click", function (event) {
+    var target = event.target;
+    if (!target || !target.closest) return;
+    var link = target.closest("a[data-goto]");
+    if (link) {
+      event.preventDefault();
+      event.stopPropagation();
+      goTo(link.getAttribute("data-goto"));
+      return;
+    }
+    var node = target.closest(".node");
+    if (!node) return;
+    var record = byElement.get(node);
+    if (!record) return;
+    /* The disclosure toggles wherever it is; the body of a root or milestone
+       toggles too, because neither has a selection meaning. */
+    if (target.closest(".disclosure") || record.kind === "root" || record.kind === "milestone") {
+      if (record.children.length === 0 || !record.disclosure) return;
+      setExpanded(record, !record.expanded);
+      layout();
+      return;
+    }
+    if (record.kind === "source") selectSource(record);
+    else selectRequirement(record);
+  });
+
+  stage.addEventListener("click", function (event) {
+    var target = event.target;
+    if (target && target.closest && target.closest(".node")) return;
+    clearSelection();
+  });
+
+  panel.addEventListener("click", function (event) {
+    var target = event.target;
+    if (!target || !target.closest) return;
+    var link = target.closest("a[data-goto]");
+    if (!link) return;
+    event.preventDefault();
+    goTo(link.getAttribute("data-goto"));
+  });
+
+  panelClose.addEventListener("click", function () { clearSelection(); });
+
+  /* Pointer and focus previews are bound per source node: neither
+     pointerenter nor focus bubbles, so delegation would never see them. */
+
+  function bindPreview(record) {
+    function enter() { hovered = { record: record }; refresh(); }
+    function leave() {
+      if (!hovered || hovered.record !== record) return;
+      hovered = null;
+      refresh();
+    }
+    record.el.addEventListener("pointerenter", enter);
+    record.el.addEventListener("pointerleave", leave);
+    /* focus does not bubble out of the button that receives it; focusin does,
+       and the wrapper is what a copy's parts sit inside. */
+    record.el.addEventListener("focusin", enter);
+    record.el.addEventListener("focusout", leave);
+  }
+
+  for (i = 0; i < items.length; i += 1) if (items[i].kind === "source") bindPreview(items[i]);
+
+  /* Enter and Space already reach the click handler: these are real buttons.
+     The arrows are what keeps expanding reachable now that Enter selects. */
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") { clearSelection(); return; }
+    if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+    var active = document.activeElement;
+    if (!active || !active.closest) return;
+    var node = active.closest(".node");
+    if (!node) return;
+    var record = byElement.get(node);
+    if (!record || record.children.length === 0 || !record.disclosure) return;
+    event.preventDefault();
+    setExpanded(record, event.key === "ArrowRight");
+    layout();
+  });
+
+  findField.addEventListener("input", function () {
+    var text = String(findField.value).trim().toLowerCase();
+    found = [];
+    if (text.length >= 2) {
+      for (var n = 0; n < items.length; n += 1) {
+        var record = items[n];
+        if (record.kind !== "requirement" && record.kind !== "source") continue;
+        if (record.search.indexOf(text) === -1) continue;
+        found.push(record);
+        expandAncestors(record);
+      }
+    }
+    /* Emptying the field drops the marks and leaves the tree as it stands. */
+    layout();
+    if (found.length > 0) reveal(found[0]);
+  });
+
+  if (data.orphanIds.length > 0) {
+    orphanButton.hidden = false;
+    orphanButton.textContent = String(data.orphanIds.length) + " without an approved source";
+    orphanButton.addEventListener("click", function () { selectOrphans(); });
+  }
+
+  document.getElementById("expand-all").addEventListener("click", function () {
+    for (var n = 0; n < items.length; n += 1) setExpanded(items[n], true);
+    layout();
+  });
+
+  document.getElementById("collapse-all").addEventListener("click", function () {
+    for (var n = 0; n < items.length; n += 1) if (items[n] !== root) setExpanded(items[n], false);
+    setExpanded(root, true);
+    layout();
+  });
+
+  window.addEventListener("resize", function () { layout(); });
+
+  layout();
+})();
+</script></body></html>
