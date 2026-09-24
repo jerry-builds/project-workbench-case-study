@@ -1,0 +1,92 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f2ee;--ink:#1f2328;--muted:#5b616b;--line:#d8d3ca;--card:#ffffff;--accent:#d9622b;--accent-soft:#fbe9df;--dark:#23272e}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1200px;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif}
+.wrap{padding:44px 52px 40px}
+.mono{font-family:'IBM Plex Mono',monospace}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.eyebrow b{color:var(--ink);font-weight:600;letter-spacing:.06em}
+h1{font-size:40px;line-height:1.15;font-weight:700;margin-top:12px;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:19px;color:var(--muted);margin-top:10px;max-width:980px;line-height:1.45}
+h2{font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:30px 0 14px;display:flex;align-items:center;gap:12px}
+h2::after{content:"";flex:1;height:1px;background:var(--line)}
+.pipe{display:grid;grid-template-columns:repeat(6,1fr);gap:0;position:relative}
+.st{position:relative;padding:0 8px}
+.st .n{width:34px;height:34px;border-radius:50%;background:var(--dark);color:#fff;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:16px;display:flex;align-items:center;justify-content:center;position:relative;z-index:2}
+.st::before{content:"";position:absolute;top:17px;left:42px;right:-8px;height:2px;background:var(--line);z-index:1}
+.st:last-child::before{display:none}
+.st.gate .n{background:var(--accent)}
+.st h3{font-size:19px;margin-top:12px;line-height:1.2}
+.st p{font-size:15.5px;color:var(--muted);margin-top:6px;line-height:1.4}
+.st.gate h3{color:var(--accent)}
+.tag{display:inline-block;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding:3px 7px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink)}
+.st.gate .tag{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.trace{display:grid;grid-template-columns:1fr 26px 1fr 26px 1fr 26px 1fr;align-items:stretch}
+.tc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 15px}
+.tc .k{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.tc .id{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;margin-top:3px}
+.tc .t{font-size:15px;line-height:1.4;margin-top:8px}
+.tc.q .t{font-style:italic}
+.tc.hot{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.arr{display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:22px;font-weight:700}
+.chips{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:2px 6px;border-radius:4px;background:#efece6;border:1px solid var(--line)}
+.chip.a{background:var(--accent-soft);border-color:var(--accent);color:#a2451b}
+.note{font-size:15px;color:var(--muted);margin-top:10px}
+.diff{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.dc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px 18px;border-top:4px solid var(--accent)}
+.dc h4{font-size:18px;line-height:1.25}
+.dc p{font-size:15px;color:var(--muted);line-height:1.42;margin-top:7px}
+.dc .vs{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink);margin-top:10px;padding-top:9px;border-top:1px dashed var(--line)}
+.dc .vs span{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);background:var(--dark);border-radius:8px;color:#fff;margin-top:26px}
+.s{padding:16px 16px 15px;border-right:1px solid #3a3f47}
+.s:last-child{border-right:0}
+.s b{display:block;font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:600;color:#fff}
+.s span{font-size:14px;color:#c4c8cf;line-height:1.3;display:block;margin-top:2px}
+.foot{display:flex;justify-content:space-between;margin-top:12px;font-size:13.5px;color:var(--muted);font-family:'IBM Plex Mono',monospace}
+</style></head>
+<body><div class="wrap">
+<div class="eyebrow"><b>PROJECT_WORKBENCH</b> &nbsp;·&nbsp; at a glance</div>
+<h1>A plain-language app idea in.<br>A <em>certified</em>, build-ready spec for AI coding agents out.</h1>
+<p class="sub">AI coding agents build exactly what they're told, so a vague or drifting spec becomes a confident, wrong app. This pipeline makes every requirement trace back to something the client actually said, and has an independent reviewer certify it before delivery.</p>
+<h2>How one order moves</h2>
+<div class="pipe">
+  <div class="st"><div class="n">1</div><h3>Intake</h3><p>The client's answers to 11 questions, stored word for word.</p><span class="tag">intake.F01 … F11</span></div>
+  <div class="st"><div class="n">2</div><h3>Audit</h3><p>Turns answers into numbered decisions and assumptions. No open questions allowed.</p><span class="tag">DEC · ASM</span></div>
+  <div class="st gate"><div class="n">3</div><h3>Human approval</h3><p>One deliberate act freezes scope. The automated pilot never approves for you.</p><span class="tag">scope frozen</span></div>
+  <div class="st"><div class="n">4</div><h3>Master PRD</h3><p>Every requirement lists its approved sources and pass/fail checks.</p><span class="tag">REQ → DEC</span></div>
+  <div class="st"><div class="n">5</div><h3>Independent QC</h3><p>A fresh-context reviewer finds typed defects; fixes are surgical. Certified twice.</p><span class="tag">Master + Package</span></div>
+  <div class="st"><div class="n">6</div><h3>Agent handoff</h3><p>One package, a file for each coding tool, plus diagrams and a ZIP.</p><span class="tag">4 agent files</span></div>
+</div>
+<h2>One requirement, traced end to end</h2>
+<div class="trace">
+  <div class="tc q"><div class="k">The client said</div><div class="id">intake.F08</div><div class="t">"…a flag after three no-shows in six months is automatic and only a receptionist can book for a flagged patient…"</div></div>
+  <div class="arr">→</div>
+  <div class="tc"><div class="k">The audit decided</div><div class="id">DEC-014 · Approved</div><div class="t">Three no-shows within six months flags the patient; only a receptionist can book while flagged.</div></div>
+  <div class="arr">→</div>
+  <div class="tc hot"><div class="k">The spec requires</div><div class="id">REQ-016</div><div class="t">Flag sets and lifts automatically over a rolling six-month window.</div><div class="chips"><span class="chip a">DEC-014</span><span class="chip">ASM-009</span><span class="chip">BR-12</span><span class="chip">3 checks</span></div></div>
+  <div class="arr">→</div>
+  <div class="tc"><div class="k">The agent is told</div><div class="id">AGENTS.md</div><div class="t">"…sets and lifts automatically, with no manual override step."</div><div class="chips"><span class="chip">DEC-014</span><span class="chip">ASM-009</span><span class="chip">BR-12</span><span class="chip a">REQ-016</span></div></div>
+</div>
+<p class="note">The same chain exists for all 34 requirements. A requirement with no source is a defect the reviewer can flag.</p>
+<h2>What makes it different</h2>
+<div class="diff">
+  <div class="dc"><h4>Traceability is the contract</h4><p>Requirements cite decisions; decisions cite the client's words. Nothing gets invented or silently dropped.</p><div class="vs"><span>vs.</span> one long prompt that drifts</div></div>
+  <div class="dc"><h4>Generation and review are separated</h4><p>The reviewer runs in a fresh context from the writer, logs typed findings, and must pass twice before export.</p><div class="vs"><span>vs.</span> a model grading its own work</div></div>
+  <div class="dc"><h4>Automation with a hard ceiling</h4><p>The pilot runs stages inside a fixed model-call allowance and stops to explain why when a person has to decide.</p><div class="vs"><span>vs.</span> agents that loop and spend</div></div>
+</div>
+<div class="stats">
+  <div class="s"><b>34</b><span>requirements, each with sources</span></div>
+  <div class="s"><b>47</b><span>decisions in the ledger</span></div>
+  <div class="s"><b>79</b><span>pass/fail acceptance checks</span></div>
+  <div class="s"><b>7</b><span>workflow diagrams</span></div>
+  <div class="s"><b>2</b><span>independent QC certifications</span></div>
+  <div class="s"><b>28/50</b><span>model calls used of the allowance</span></div>
+</div>
+<div class="foot"><span>Figures from the Elm Street Clinic demo order (Premium), run end to end.</span><span>For Claude Code · Codex · Cursor · Lovable · Replit</span></div>
+</div></body></html>

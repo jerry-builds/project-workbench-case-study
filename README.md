@@ -6,7 +6,7 @@ I built this solo with AI coding agents, August to September 2026, in Next.js / 
 
 **Live showcase:** https://jerry-builds.github.io/project-workbench-case-study/
 
-![Overview](screenshots/overview.png)
+<a href="assets/infographic.png"><img src="assets/infographic.png" alt="PROJECT_WORKBENCH at a glance: a six-stage pipeline from client intake to a human approval gate, a sourced Master PRD, independent QC and agent handoff files; one requirement traced from the client's words to AGENTS.md; what makes it different; and figures from the Elm Street Clinic demo order."></a>
 
 ---
 
