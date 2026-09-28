@@ -76,6 +76,8 @@ section{padding:64px 0;border-top:1px solid var(--line)}
 .stat span{display:block;margin-top:8px;font:12px/1.4 var(--mono);color:var(--muted)}
 @media (max-width:860px){.stats{grid-template-columns:repeat(3,1fr)}.stat:nth-child(3n){border-right:0}.stat:nth-child(-n+3){border-bottom:1px solid var(--line)}}
 @media (max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}.stat{border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)}.stat:nth-child(2n){border-right:0!important}}
+.stats.four{grid-template-columns:repeat(4,1fr)}
+@media (max-width:860px){.stats.four{grid-template-columns:repeat(2,1fr)}.stats.four .stat{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.stats.four .stat:nth-child(2n){border-right:0}.stats.four .stat:nth-child(n+3){border-bottom:0}}
 
 /* pipeline */
 .pipe{display:grid;grid-template-columns:repeat(9,1fr);gap:0;margin-top:28px;border:1px solid var(--line);background:var(--panel)}
@@ -164,6 +166,7 @@ footer a{color:var(--ink)}
   <a class="l" href="#screens">Workbench</a>
   <a class="l" href="#numbers">Numbers</a>
   <a class="l" href="#package">Package</a>
+  <a class="l" href="#ado">Azure Boards</a>
 </div></nav>
 
 <header class="hero" id="top"><div class="wrap">
@@ -341,6 +344,20 @@ footer a{color:var(--ink)}
     <li><a href="https://github.com/jerry-builds/project-workbench-case-study/tree/main/sample/diagrams">diagrams/</a><span>Scope map, role matrix, traceability diagram and map, seven workflows (SVG + PNG).</span></li>
     <li><a href="https://github.com/jerry-builds/project-workbench-case-study/blob/main/sample/assumptions-and-open-questions.md">assumptions-and-open-questions.md</a><span>Everything assumed, stated plainly.</span></li>
   </ul>
+</div></section>
+
+<section id="ado"><div class="wrap">
+  <div class="eyebrow">Delivered to the team's tracker</div>
+  <h2>Delivering to Azure DevOps Boards</h2>
+  <p class="lede">On 2026-09-28 I loaded the sample order's certified Master into an Azure DevOps Boards project: one Epic for the product, one Feature per milestone, one User Story per requirement. Each story carries its acceptance criteria word for word, and its tags list the REQ id and every approved source it cites.</p>
+  <div class="stats four" style="margin-top:26px">
+    <div class="stat"><b>1</b><span>Epic</span></div>
+    <div class="stat"><b>8</b><span>Features, one per milestone</span></div>
+    <div class="stat"><b>34</b><span>User Stories, each under its Feature</span></div>
+    <div class="stat"><b>79</b><span>acceptance criteria, in the stories' Acceptance Criteria field</span></div>
+  </div>
+  <div class="shot"><a href="screenshots/ado-backlog.png"><img src="screenshots/ado-backlog.png" alt="Azure Boards backlog for the sample order: the Epic, milestone Features and requirement stories with their source tags." loading="lazy"></a></div>
+  <div class="caption">Counts verified by querying the project after the load. The traceability tags mean a developer or agent picking up any story can see which client decision it came from. Also exported as <a href="sample/ado/elm-street-backlog.csv" style="color:var(--accent)">a CSV in Azure Boards' import format</a>.</div>
 </div></section>
 
 <footer><div class="wrap">

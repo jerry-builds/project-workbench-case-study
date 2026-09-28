@@ -90,6 +90,26 @@ The screenshots and [`sample/`](sample/) come from a Premium order I invented an
 
 I wrote this demonstration order myself; it is not client work.
 
+## Delivering to Azure DevOps Boards
+
+On 2026-09-28 I loaded the sample order's certified Master PRD into an Azure DevOps Boards project (Agile process) as a backlog.
+
+| Master PRD | Azure Boards |
+|---|---|
+| The product | one Epic |
+| Each roadmap milestone | one Feature under the Epic |
+| Each requirement (`REQ-###`) | one User Story under its milestone's Feature |
+| The requirement's acceptance criteria | the story's Acceptance Criteria field, word for word |
+| The requirement's approved sources | tags: the REQ id plus each `DEC-`, `ASM-` and `BR-` it cites |
+
+Verified by querying the project after the load: 1 Epic, 8 Features and 34 User Stories carrying all 79 acceptance criteria. Every story has a Feature as its parent, non-empty Acceptance Criteria, and tags equal to its REQ id plus its approved sources.
+
+<a href="screenshots/ado-backlog.png"><img src="screenshots/thumbs/ado-backlog.png" width="240" alt="Azure Boards backlog for the sample order (click for full size)"></a>
+
+The traceability tags mean a developer or agent picking up any story can see which client decision it came from.
+
+The items were created through the Azure DevOps MCP server from Claude Code. [`tools/ado-export/prd_to_ado.py`](tools/ado-export/) also writes the same backlog as [a CSV in Azure Boards' import format](sample/ado/elm-street-backlog.csv), for teams that import it themselves. The load shown above used the MCP server, not the CSV.
+
 ## Tools used to build it
 
 I built it with Claude Code, Codex and other agentic coding tools, using a spec, then plan, then implementation workflow. The same agents are the audience for the package it produces, so I built and tested it against how they actually read `AGENTS.md` and `CLAUDE.md`.
